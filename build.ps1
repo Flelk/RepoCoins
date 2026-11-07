@@ -1,15 +1,16 @@
-<#
-  Builds RepoCoins and packages a Thunderstore-format zip in .\dist\ that friends can import.
+﻿<#
+  Builds the mod and packages a Thunderstore-format zip in .\dist\ that friends can import.
+  The mod name and version come from thunderstore\manifest.json.
 
   .\build.ps1                      build + package
   .\build.ps1 -Install             also copy the DLL into your r2modman profile (or the game's BepInEx) for testing
-  .\build.ps1 -Install -R2Profile "Coins"   use a different r2modman profile (default: Default)
+  .\build.ps1 -Install -R2Profile "Name"   pick the r2modman profile (default: 'Default', or the only profile)
   .\build.ps1 -GameDir "D:\...\REPO"   if R.E.P.O. is installed somewhere else
 #>
 param(
     [string]$GameDir = $(if ($env:REPO_GAME_DIR) { $env:REPO_GAME_DIR } else { 'C:\Program Files (x86)\Steam\steamapps\common\REPO' }),
     [switch]$Install,
-    [string]$R2Profile = 'Default'
+    [string]$R2Profile = ''
 )
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
@@ -43,15 +44,28 @@ Write-Host "Package: $zip" -ForegroundColor Green
 
 if ($Install) {
     # Prefer the r2modman profile; fall back to a BepInEx installed directly in the game folder.
-    $profileDir = "$env:APPDATA\r2modmanPlus-local\REPO\profiles\$R2Profile"
+    $profilesRoot = "$env:APPDATA\r2modmanPlus-local\REPO\profiles"
+    if (-not $R2Profile) {
+        $names = @(Get-ChildItem $profilesRoot -Directory -Name -ErrorAction SilentlyContinue)
+        $R2Profile = if ($names -contains 'Default') { 'Default' } elseif ($names.Count -eq 1) { $names[0] } else { 'Default' }
+    }
+    $profileDir = "$profilesRoot\$R2Profile"
     if (Test-Path "$profileDir\BepInEx\core") {
         $plugins = "$profileDir\BepInEx\plugins"
     } elseif (Test-Path "$GameDir\BepInEx\core") {
         $plugins = "$GameDir\BepInEx\plugins"
     } else {
-        throw "No BepInEx found. In r2modman, select R.E.P.O., make profile '$R2Profile' and import the zip once (or run .\tools\install-bepinex.ps1)."
+        throw "No BepInEx found. In r2modman, select R.E.P.O., pick a profile and import the zip once (or run .\tools\install-bepinex.ps1)."
     }
-    New-Item -ItemType Directory "$plugins\$name" -Force | Out-Null
-    Copy-Item $dll "$plugins\$name\" -Force
-    Write-Host "Installed to $plugins\$name" -ForegroundColor Green
+
+    # Reuse the folder r2modman made on import (e.g. flelk-<name>) so the mod isn't loaded twice.
+    $target = Get-ChildItem $plugins -Directory -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -eq $name -or $_.Name -like "*-$name" } |
+        Select-Object -First 1 -ExpandProperty FullName
+    if (-not $target) {
+        $target = "$plugins\$name"
+        New-Item -ItemType Directory $target -Force | Out-Null
+    }
+    Copy-Item $dll "$target\" -Force
+    Write-Host "Installed to $target" -ForegroundColor Green
 }
