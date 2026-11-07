@@ -5,12 +5,12 @@
     <AssemblyName>RepoCoins</AssemblyName>
     <RootNamespace>RepoCoins</RootNamespace>
     <Product>REPO Coins</Product>
-    <BepInExPluginGuid>gabe.repocoins</BepInExPluginGuid>
+    <BepInExPluginGuid>flelk.repocoins</BepInExPluginGuid>
     <!-- Version is set from thunderstore/manifest.json by build.ps1 -->
     <Version>1.0.0</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <DebugType>embedded</DebugType>
+    <DebugType>none</DebugType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <RestoreAdditionalProjectSources>https://nuget.bepinex.dev/v3/index.json</RestoreAdditionalProjectSources>
 

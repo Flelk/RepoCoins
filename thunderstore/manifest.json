@@ -1,6 +1,6 @@
 {
   "name": "RepoCoins",
-  "version_number": "1.1.0",
+  "version_number": "2.0.0",
   "website_url": "https://github.com/Flelk/RepoCoins",
   "description": "Client-side: get 1 cosmetic coin every time you complete a level. Works as host or as a guest; only you need the mod.",
   "dependencies": [

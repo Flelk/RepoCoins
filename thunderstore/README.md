@@ -17,7 +17,7 @@ No coin for failed levels, the shop, the arena, the lobby, or for joining a lobb
 2. Put `RepoCoins.dll` in `BepInEx\plugins\`.
 
 ## Settings
-These are in `BepInEx\config\gabe.repocoins.cfg`, or the config editor in r2modman/Gale:
+These are in `BepInEx\config\flelk.repocoins.cfg`, or the config editor in r2modman/Gale:
 - `Rarity`: Common (default), Uncommon, Rare or UltraRare
 - `ShowMessage`: shows a "+1 coin" message on screen (on by default)
 - `BackupSaveFirst`: on by default
